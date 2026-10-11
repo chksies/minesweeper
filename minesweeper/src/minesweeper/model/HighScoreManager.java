@@ -1,5 +1,10 @@
 package minesweeper.model;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +26,9 @@ public class HighScoreManager {
     // ── Singleton infrastructure ──────────────────────────────────────────────
     private static volatile HighScoreManager instance;
 
-    private HighScoreManager() {}  // private — no external instantiation
+    private HighScoreManager() {   // private — no external instantiation
+        load();
+    }
 
     public static HighScoreManager getInstance() {
         if (instance == null) {                        // first check (no lock)
@@ -43,6 +50,41 @@ public class HighScoreManager {
     public void addScore(Score score) {
         scores.add(score);
         Collections.sort(scores);
+        save();
+    }
+
+    // ── Persistence ──────────────────────────────────────────────────────────
+    // One score per line: difficulty <TAB> seconds <TAB> player name
+
+    private static final Path SCORE_FILE = Paths.get("highscores.txt");
+
+    private void load() {
+        if (!Files.exists(SCORE_FILE)) return;
+        try {
+            for (String line : Files.readAllLines(SCORE_FILE, StandardCharsets.UTF_8)) {
+                String[] parts = line.split("\t", 3);
+                if (parts.length != 3) continue;           // skip malformed lines
+                try {
+                    scores.add(new Score(parts[2], Integer.parseInt(parts[1]), parts[0]));
+                } catch (NumberFormatException ignored) { }
+            }
+            Collections.sort(scores);
+        } catch (IOException e) {
+            System.err.println("Could not read high scores: " + e.getMessage());
+        }
+    }
+
+    private void save() {
+        List<String> lines = new ArrayList<>();
+        for (Score s : scores) {
+            String name = s.getPlayerName().replaceAll("[\\t\\r\\n]", " ");
+            lines.add(s.getDifficulty() + "\t" + s.getSeconds() + "\t" + name);
+        }
+        try {
+            Files.write(SCORE_FILE, lines, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            System.err.println("Could not save high scores: " + e.getMessage());
+        }
     }
 
     /**
@@ -65,6 +107,7 @@ public class HighScoreManager {
 
     public void clearScores() {
         scores.clear();
+        save();
     }
 
     /** Used only for testing — resets the singleton (not for production use). */

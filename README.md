@@ -58,6 +58,8 @@ java -cp out minesweeper.Main
 **Where:** `minesweeper.model.HighScoreManager`
 - `getInstance()` returns the single shared instance.
 - Thread-safe via double-checked locking.
+- Scores are saved to `highscores.txt` in the directory the game is run from
+  and loaded again on the next start.
 - **Why:** Both `Game` (writes score on win) and `BoardView` (reads scores)
   must share the same list without any cross-wiring.
 

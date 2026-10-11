@@ -5,3 +5,7 @@ sources.txt
 # IDE
 .idea/
 *.iml
+
+# Saved high scores
+highscores.txt
+minesweeper/highscores.txt
