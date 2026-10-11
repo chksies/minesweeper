@@ -127,6 +127,27 @@ public class Board {
         cells[r][c].cover = cover;
     }
 
+    /**
+     * Cells a chord on (r,c) would reveal: the unflagged, unrevealed neighbours of a
+     * revealed number whose adjacent flag count equals its number.
+     * Empty if the chord does not apply.
+     */
+    public List<int[]> chordTargets(int r, int c) {
+        List<int[]> targets = new ArrayList<>();
+        Cell cell = cells[r][c];
+        if (!cell.isRevealed() || cell.isMine()) return targets;
+        int number = ((SafeCell) cell).getAdjacentMines();
+        if (number == 0) return targets;
+
+        int flags = 0;
+        for (int[] n : neighbours(r, c)) {
+            Cell neighbour = cells[n[0]][n[1]];
+            if (neighbour.isFlagged()) flags++;
+            else if (!neighbour.isRevealed()) targets.add(n);
+        }
+        return flags == number ? targets : new ArrayList<>();
+    }
+
     /** Capture every cell's current cover (used by RevealCommand to undo flood-fills). */
     public Cover[][] snapshotCovers() {
         Cover[][] snapshot = new Cover[rows][cols];

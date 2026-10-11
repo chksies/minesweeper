@@ -36,6 +36,10 @@ public class CommandManager {
         execute(new FlagCommand(game, row, col));
     }
 
+    public void chord(int row, int col) {
+        execute(new ChordCommand(game, row, col));
+    }
+
     // ── Core command execution ────────────────────────────────────────────────
 
     public void execute(Command cmd) {

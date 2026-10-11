@@ -27,6 +27,7 @@ java -cp out minesweeper.Main
 |------------------|------------------------------------------|
 | `r <row> <col>`  | Reveal a cell                            |
 | `f <row> <col>`  | Cycle flag (plain → flag → question)     |
+| `c <row> <col>`  | Chord: on a revealed number with that many adjacent flags, reveal its other neighbours |
 | `u`              | Undo last action                         |
 | `redo`           | Redo last undone action                  |
 | `reset`          | Start a new game (same difficulty)       |

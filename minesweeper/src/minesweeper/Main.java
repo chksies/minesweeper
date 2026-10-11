@@ -14,6 +14,7 @@ import java.util.Scanner;
  * Commands:
  *   r <row> <col>   — reveal a cell
  *   f <row> <col>   — cycle flag on a cell
+ *   c <row> <col>   — chord: reveal neighbours of a satisfied number
  *   u               — undo last action
  *   redo            — redo last undone action
  *   reset           — start a new game (same difficulty)
@@ -54,6 +55,21 @@ public class Main {
                         int[] cell = parseCell(parts, game);
                         if (cell == null) continue;
                         manager.flag(cell[0], cell[1]);
+                        break;
+                    }
+                    case "c": case "chord": {
+                        int[] cell = parseCell(parts, game);
+                        if (cell == null) continue;
+                        if (game.isOver()) {
+                            System.out.println("Game is over. Type 'reset' for a new game.");
+                            continue;
+                        }
+                        if (game.getBoard().chordTargets(cell[0], cell[1]).isEmpty()) {
+                            System.out.println("Nothing to chord: pick a revealed number whose flag count matches it,"
+                                    + " with unrevealed neighbours left.");
+                            continue;
+                        }
+                        manager.chord(cell[0], cell[1]);
                         break;
                     }
                     case "u": case "undo": {
@@ -157,6 +173,7 @@ public class Main {
         System.out.println("Commands:");
         System.out.println("  r <row> <col>  — reveal cell");
         System.out.println("  f <row> <col>  — cycle flag (plain/flag/question)");
+        System.out.println("  c <row> <col>  — chord: reveal neighbours of a number with enough flags");
         System.out.println("  u              — undo last action");
         System.out.println("  redo           — redo last undone action");
         System.out.println("  reset          — start new game");
