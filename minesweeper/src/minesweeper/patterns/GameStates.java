@@ -40,9 +40,12 @@ class PlayingState implements GameState {
 // ─────────────────────────────────────────────────────────────────────────────
 class WonState implements GameState {
 
+    private int seconds;
+
     @Override
     public void onEnter(Game ctx) {
         ctx.getTimer().stop();
+        seconds = ctx.getTimer().getSeconds();
         ctx.recordScore();
     }
 
@@ -58,7 +61,7 @@ class WonState implements GameState {
 
     @Override
     public String getStatusMessage() {
-        return "YOU WIN!  Congratulations!";
+        return "YOU WIN!  Congratulations! Cleared in " + seconds + "s.";
     }
 }
 
