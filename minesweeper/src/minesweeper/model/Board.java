@@ -127,6 +127,22 @@ public class Board {
         cells[r][c].cover = cover;
     }
 
+    /** Capture every cell's current cover (used by RevealCommand to undo flood-fills). */
+    public Cover[][] snapshotCovers() {
+        Cover[][] snapshot = new Cover[rows][cols];
+        for (int r = 0; r < rows; r++)
+            for (int c = 0; c < cols; c++)
+                snapshot[r][c] = cells[r][c].getCover();
+        return snapshot;
+    }
+
+    /** Restore every cell's cover from a snapshot taken by snapshotCovers(). */
+    public void restoreCovers(Cover[][] snapshot) {
+        for (int r = 0; r < rows; r++)
+            for (int c = 0; c < cols; c++)
+                cells[r][c].cover = snapshot[r][c];
+    }
+
     /** Reveal all mines — called by LostState.onEnter(). */
     public void revealAllMines() {
         for (int r = 0; r < rows; r++)

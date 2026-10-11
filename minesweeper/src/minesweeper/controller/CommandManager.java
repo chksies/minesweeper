@@ -65,7 +65,7 @@ public class CommandManager {
         history.push(cmd);
     }
 
-    public boolean canUndo() { return !history.isEmpty(); }
+    public boolean canUndo() { return !history.isEmpty() && !game.isOver(); }
     public boolean canRedo() { return !redoStack.isEmpty(); }
 
     public void clearHistory() {

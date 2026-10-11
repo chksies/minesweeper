@@ -50,8 +50,9 @@ java -cp out minesweeper.Main
 **Where:** `minesweeper.controller`
 - `Command` (interface), `RevealCommand`, `FlagCommand`, `CommandManager`
 - `CommandManager` is the Invoker. It holds a history stack and redo stack.
-- **Why:** Enables clean undo/redo. Each command stores the pre-action
-  cover so `undo()` can restore it exactly.
+- **Why:** Enables clean undo/redo. A reveal snapshots all covers
+  (so undo also re-hides flood-filled cells); a flag stores the pre-action
+  cover. Undo is disabled once the game is won or lost.
 
 ### 3. Singleton Pattern
 **Where:** `minesweeper.model.HighScoreManager`

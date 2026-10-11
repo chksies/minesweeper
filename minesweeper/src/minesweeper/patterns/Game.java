@@ -105,4 +105,5 @@ public class Game {
     public Difficulty  getDifficulty()    { return difficulty; }
     public String      getPlayerName()    { return playerName; }
     public boolean     isFirstMove()      { return firstMove; }
+    public boolean     isOver()           { return !(currentState instanceof PlayingState); }
 }

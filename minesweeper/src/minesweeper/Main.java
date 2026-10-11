@@ -58,6 +58,7 @@ public class Main {
                     }
                     case "u": case "undo": {
                         if (manager.canUndo()) manager.undo();
+                        else if (game.isOver()) System.out.println("Game is over. Type 'reset' for a new game.");
                         else System.out.println("Nothing to undo.");
                         break;
                     }
