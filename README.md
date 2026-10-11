@@ -1,8 +1,14 @@
 
+# Minesweeper
+
+A text-based Minesweeper game in Java (JDK 11+), built around four design patterns.
 
 ## How to Build & Run
 
+From the `minesweeper/` directory:
+
 ```bash
+cd minesweeper
 chmod +x build.sh
 ./build.sh
 ```
@@ -25,6 +31,8 @@ java -cp out minesweeper.Main
 | `redo`           | Redo last undone action                  |
 | `reset`          | Start a new game (same difficulty)       |
 | `scores`         | Show high scores for current difficulty  |
+| `history`        | Print the command history                |
+| `help`           | Show the command list                    |
 | `quit`           | Exit                                     |
 
 ## Design Patterns Used
@@ -32,6 +40,7 @@ java -cp out minesweeper.Main
 ### 1. State Pattern
 **Where:** `minesweeper.patterns`
 - `GameState` (interface), `PlayingState`, `WonState`, `LostState`
+  (the three states live together in `GameStates.java`)
 - `Game` is the Context. It holds the current state and delegates
   `reveal()` and `flag()` to the current state object.
 - **Why:** Eliminates if/else chains checking game phase. Adding a new

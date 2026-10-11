@@ -1,0 +1,7 @@
+# Build output
+minesweeper/out/
+sources.txt
+
+# IDE
+.idea/
+*.iml
