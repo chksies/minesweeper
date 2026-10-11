@@ -29,9 +29,8 @@ public class Main {
 
         System.out.println("=== MINESWEEPER ===");
         String name = prompt(scanner, "Enter your name: ");
-        Difficulty diff = chooseDifficulty(scanner);
 
-        Game           game    = new Game(diff, name);
+        Game           game    = chooseGame(scanner, name);
         CommandManager manager = new CommandManager(game);
 
         view.render(game);
@@ -84,13 +83,16 @@ public class Main {
                         break;
                     }
                     case "reset": {
-                        game    = new Game(diff, name);
+                        game.reset();                       // same difficulty and board size
                         manager = new CommandManager(game);
                         System.out.println("New game started!");
                         break;
                     }
                     case "scores": {
-                        view.renderHighScores(diff.name());
+                        if (game.getDifficulty() == Difficulty.CUSTOM)
+                            System.out.println("Scores are not recorded for custom boards.");
+                        else
+                            view.renderHighScores(game.getDifficulty().name());
                         continue;
                     }
                     case "history": {
@@ -122,19 +124,42 @@ public class Main {
 
     // ─────────────────────────────────────────────────────────────────────────
 
-    private static Difficulty chooseDifficulty(Scanner scanner) {
+    private static Game chooseGame(Scanner scanner, String name) {
         System.out.println("Choose difficulty:");
         System.out.println("  1. Beginner     ( 9× 9, 10 mines)");
         System.out.println("  2. Intermediate (16×16, 40 mines)");
         System.out.println("  3. Expert       (16×30, 99 mines)");
+        System.out.println("  4. Custom       (your own size, no high scores)");
         while (true) {
-            String choice = prompt(scanner, "Enter 1/2/3: ").trim();
+            String choice = prompt(scanner, "Enter 1/2/3/4: ").trim();
+            if (choice.equals("quit")) System.exit(0);   // end of input
             switch (choice) {
-                case "1": return Difficulty.BEGINNER;
-                case "2": return Difficulty.INTERMEDIATE;
-                case "3": return Difficulty.EXPERT;
-                default: System.out.println("Please enter 1, 2, or 3.");
+                case "1": return new Game(Difficulty.BEGINNER, name);
+                case "2": return new Game(Difficulty.INTERMEDIATE, name);
+                case "3": return new Game(Difficulty.EXPERT, name);
+                case "4": return chooseCustomGame(scanner, name);
+                default: System.out.println("Please enter 1, 2, 3, or 4.");
             }
+        }
+    }
+
+    private static Game chooseCustomGame(Scanner scanner, String name) {
+        int rows  = promptInt(scanner, "Rows (2-30): ", 2, 30);
+        int cols  = promptInt(scanner, "Columns (2-50): ", 2, 50);
+        int mines = promptInt(scanner, "Mines (1-" + (rows * cols - 1) + "): ", 1, rows * cols - 1);
+        return new Game(name, rows, cols, mines);
+    }
+
+    /** Ask until the player enters a whole number between min and max (inclusive). */
+    private static int promptInt(Scanner scanner, String msg, int min, int max) {
+        while (true) {
+            String line = prompt(scanner, msg).trim();
+            if (line.equals("quit")) System.exit(0);   // prompt() returns "quit" at end of input
+            try {
+                int value = Integer.parseInt(line);
+                if (value >= min && value <= max) return value;
+            } catch (NumberFormatException ignored) { }
+            System.out.printf("Please enter a whole number from %d to %d.%n", min, max);
         }
     }
 

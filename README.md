@@ -21,6 +21,12 @@ javac -d out @sources.txt
 java -cp out minesweeper.Main
 ```
 
+## Difficulty
+
+Choose Beginner (9×9, 10 mines), Intermediate (16×16, 40 mines) or Expert
+(16×30, 99 mines) at start-up, or pick Custom to set your own rows (2-30),
+columns (2-50) and mines. Scores are only recorded for the three presets.
+
 ## Commands (in-game)
 
 | Command          | Action                                   |
