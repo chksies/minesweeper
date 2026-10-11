@@ -45,15 +45,15 @@ public class Main {
             try {
                 switch (cmd) {
                     case "r": case "reveal": {
-                        int r = Integer.parseInt(parts[1]);
-                        int c = Integer.parseInt(parts[2]);
-                        manager.reveal(r, c);
+                        int[] cell = parseCell(parts, game);
+                        if (cell == null) continue;
+                        manager.reveal(cell[0], cell[1]);
                         break;
                     }
                     case "f": case "flag": {
-                        int r = Integer.parseInt(parts[1]);
-                        int c = Integer.parseInt(parts[2]);
-                        manager.flag(r, c);
+                        int[] cell = parseCell(parts, game);
+                        if (cell == null) continue;
+                        manager.flag(cell[0], cell[1]);
                         break;
                     }
                     case "u": case "undo": {
@@ -89,8 +89,8 @@ public class Main {
                         printHelp();
                         continue;
                 }
-            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-                System.out.println("Invalid command. Type 'help' for usage.");
+            } catch (RuntimeException e) {
+                System.out.println("Something went wrong: " + e.getMessage());
                 continue;
             }
 
@@ -120,6 +120,32 @@ public class Main {
                 default: System.out.println("Please enter 1, 2, or 3.");
             }
         }
+    }
+
+    /**
+     * Parse "<cmd> <row> <col>" and validate it against the board size.
+     * Prints a specific message and returns null if the input is unusable.
+     */
+    private static int[] parseCell(String[] parts, Game game) {
+        if (parts.length != 3) {
+            System.out.println("Usage: " + parts[0] + " <row> <col>   (example: " + parts[0] + " 3 4)");
+            return null;
+        }
+        int r, c;
+        try {
+            r = Integer.parseInt(parts[1]);
+            c = Integer.parseInt(parts[2]);
+        } catch (NumberFormatException e) {
+            System.out.println("Row and column must be whole numbers.");
+            return null;
+        }
+        int rows = game.getBoard().getRows();
+        int cols = game.getBoard().getCols();
+        if (r < 0 || r >= rows || c < 0 || c >= cols) {
+            System.out.printf("Out of range. Rows are 0-%d and columns are 0-%d.%n", rows - 1, cols - 1);
+            return null;
+        }
+        return new int[]{r, c};
     }
 
     private static String prompt(Scanner scanner, String msg) {
